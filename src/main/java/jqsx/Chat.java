@@ -83,8 +83,8 @@ public class Chat {
             createNewText("### ### ### ### ###");
         }
         else if (args[0].equalsIgnoreCase("setname") && args.length >= 2) {
-            name = args[1];
-            createNewText("SYS > set name to " + name);
+            name = args[1].substring(0, 16);
+            createInfoText("(SYS) set name to " + name);
         }
         else if (args[0].equalsIgnoreCase("setsize") && args.length >= 2) {
             try {
@@ -109,16 +109,17 @@ public class Chat {
     }
 
     private void printHelp() {
-        createNewText("===========");
-        createNewText("!help - this help menu");
-        createNewText("!credits - software credits");
-        createNewText("!setname <name> - set your name");
-        createNewText("!hello - search for friends on local network");
-        createNewText("===========");
+        createInfoText("===========");
+        createInfoText("!help - this help menu");
+        createInfoText("!credits - software credits");
+        createInfoText("!setname <name> - set your name");
+        createInfoText("!setsize <size:int> - set text size");
+        createInfoText("!hello - search for friends on local network");
+        createInfoText("===========");
     }
 
     private void printERRCMD() {
-        createErrorText("SYS > ERR Unknown CMD: !help for help");
+        createErrorText("(SYS) ERR Unknown CMD: !help for help");
     }
 
     private JScrollPane Chat() {
@@ -142,7 +143,7 @@ public class Chat {
 
         main.add(textField1(), BorderLayout.SOUTH);
 
-        createNewText("WELCOME TO SHIT CHAT");
+        createInfoText("WELCOME TO SHIT CHAT");
 
         main.setBackground(Color.BLACK);
 
@@ -159,6 +160,16 @@ public class Chat {
         text1.setFont(font);
         int shade = (int)Math.floor(150 + 100 * Math.random());
         text1.setForeground(new Color(shade, shade, shade));
+        text1.setBorder(null);
+
+        content.add(text1);
+    }
+
+    public void createInfoText(String text) {
+        JLabel text1 = new JLabel(text);
+        text1.setFont(font);
+        int shade = (int)Math.floor(150 + 100 * Math.random());
+        text1.setForeground(new Color(0, shade, 0));
         text1.setBorder(null);
 
         content.add(text1);
