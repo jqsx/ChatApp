@@ -219,7 +219,7 @@ public class Chat {
     private void net() {
         try {
             NetworkServer.host = getLocalAddress();
-            NetworkServer.PORT = new Random().nextInt(6000, 15000);
+            NetworkServer.PORT = 6000 + new Random().nextInt(9000);
 
             System.out.println(NetworkServer.host.getHostAddress());
             System.out.println(NetworkServer.PORT);
@@ -244,7 +244,6 @@ public class Chat {
     }
 
     public void createNewText(String text) {
-
         JLabel text1 = new JLabel("> " + text);
         text1.setFont(font);
         int shade = (int)Math.floor(150 + 100 * Math.random());
@@ -252,10 +251,12 @@ public class Chat {
         text1.setBorder(null);
 
         content.add(text1);
-        chat.updateUI();
+        if (chat != null)
+            chat.updateUI();
     }
 
     public void createInfoText(String text) {
+        if (chat == null) return;
         JLabel text1 = new JLabel(text);
         text1.setFont(font);
         int shade = (int)Math.floor(150 + 100 * Math.random());
@@ -288,7 +289,7 @@ public class Chat {
 
     public static void logErr(Exception e) {
         instance.createErrorText(e.getLocalizedMessage());
-        throw new RuntimeException(e);
+        System.out.println(e);
     }
 
     public static void logInfo(String text) {

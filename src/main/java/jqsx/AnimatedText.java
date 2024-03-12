@@ -23,6 +23,7 @@ public class AnimatedText extends JLabel implements Runnable {
         while (getParent() == null)
             sleep(1);
         while (getParent() != null) {
+            if (!getParent().isVisible()) continue;
             int x = Math.min((int)Math.floor(getTime() * revolveSpeed) % (text.length() + 4), text.length());
             String t = text.substring(x) + text.substring(0, x);
             if (!getText().equals(t)) {

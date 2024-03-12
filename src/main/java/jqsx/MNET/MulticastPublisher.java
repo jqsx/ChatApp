@@ -13,6 +13,7 @@ public class MulticastPublisher {
 
     public void multicast(int port) throws IOException {
         socket = new DatagramSocket();
+        socket.setBroadcast(true);
         group = InetAddress.getByName("224.0.2.0");
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(port);
