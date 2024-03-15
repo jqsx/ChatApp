@@ -1,6 +1,8 @@
 package jqsx;
 
 import javax.swing.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class AnimatedText extends JLabel implements Runnable {
     private final Thread thread;

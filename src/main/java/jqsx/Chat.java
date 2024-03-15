@@ -8,10 +8,10 @@ import jqsx.Net.NetworkServer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.LabelUI;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
@@ -24,6 +24,7 @@ public class Chat {
     public String name = "USER";
 
     public final MessageRoute messageRoute = new MessageRoute(this);
+    public final LinkRoute linkRoute = new LinkRoute();
 
     private final MulticastReceiver receiver = new MulticastReceiver();
 
@@ -118,17 +119,20 @@ public class Chat {
                 createErrorText("Thats not an integer...");
             }
         }
+        else if (args[0].equalsIgnoreCase("link") && args.length >= 2) {
+            linkRoute.send(name, args[1]);
+        }
         else if (args[0].equalsIgnoreCase("clear")) {
             content.removeAll();
-            createInfoText("Chat conent cleared");
+            createInfoText("Chat content cleared");
         }
         else if (args[0].equalsIgnoreCase("users")) {
             createNewText("# Connected users #");
             for (NetworkConnectionToClient conn : NetworkServer.clients) {
-                createNewText(" - " + conn.socket.getInetAddress().getHostName() + " - " + conn.socket.getInetAddress().getHostAddress());
+                createNewText(" - " + conn.socket.getInetAddress().getHostName());
             }
             for (NetworkClient conn : NetworkClient.clients) {
-                createNewText(" - " + conn.socket.getInetAddress().getHostAddress());
+                createNewText(" - " + conn.socket.getInetAddress().getHostName());
             }
         }
         else if (args[0].equalsIgnoreCase("server")) {
@@ -158,7 +162,9 @@ public class Chat {
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
         content.setBackground(Color.BLACK);
         content.setBorder(null);
-        return new JScrollPane(content);
+        JScrollPane pane =  new JScrollPane(content);
+
+        return pane;
     }
     private JPanel Container;
 
@@ -226,9 +232,9 @@ public class Chat {
 
             NetworkServer.StartServer();
 
-            receiver.start();
+            new MulticastPublisher().multicast( NetworkServer.PORT );
 
-            new MulticastPublisher().multicast( NetworkServer.PORT);
+            receiver.start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -245,9 +251,11 @@ public class Chat {
 
     public void createNewText(String text) {
         JLabel text1 = new JLabel("> " + text);
+        text1.setSize(new Dimension(chat.getWidth(), 20));
         text1.setFont(font);
         int shade = (int)Math.floor(150 + 100 * Math.random());
         text1.setForeground(new Color(shade, shade, shade));
+        text1.setBackground(Color.BLACK);
         text1.setBorder(null);
 
         content.add(text1);
@@ -294,5 +302,35 @@ public class Chat {
 
     public static void logInfo(String text) {
         instance.createInfoText("(SYS) " + text);
+    }
+
+    public static void addLink(String text, String link) {
+        instance.createLinkMessage(text, link);
+    }
+
+    public void createLinkMessage(String text, String link) {
+        JLabel text1 = new JLabel("> " + text);
+        text1.setSize(new Dimension(chat.getWidth(), 20));
+        text1.setFont(font);
+        int shade = (int)Math.floor(50 * Math.random());
+        text1.setForeground(new Color(50 + shade, 100 + shade, 200 + shade));
+        text1.setBorder(null);
+
+        text1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        text1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI(link));
+                } catch (IOException | URISyntaxException e1) {
+                    logErr(e1);
+                }
+            }
+        });
+
+        content.add(text1);
+        if (chat != null)
+            chat.updateUI();
     }
 }

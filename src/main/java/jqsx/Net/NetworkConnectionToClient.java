@@ -59,6 +59,7 @@ public class NetworkConnectionToClient implements Runnable {
             System.out.println("Closed");
         } catch (IOException e) {
             System.out.println("[SERVERCLIENT] Problem");
+            Chat.logInfo("Disconnected: " + socket.getInetAddress().getHostName());
         }
         finally {
             RouteManager.onServerClientDisconnect(this);

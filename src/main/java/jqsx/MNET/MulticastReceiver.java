@@ -2,6 +2,7 @@ package jqsx.MNET;
 
 import jqsx.Chat;
 import jqsx.Net.NetworkClient;
+import jqsx.Net.NetworkServer;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -31,6 +32,9 @@ public class MulticastReceiver extends Thread {
                 System.out.println(Arrays.toString(packet.getData()));
                 if (buffer.capacity() == 4) {
                     int port = buffer.getInt();
+                    if (port == NetworkServer.PORT) {
+                        continue;
+                    }
                     if (port >= 6000 && port <= 15000) {
                         new NetworkClient(packet.getAddress(), port);
                         System.out.println("Got port");

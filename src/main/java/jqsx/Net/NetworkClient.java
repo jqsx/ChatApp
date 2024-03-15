@@ -116,11 +116,11 @@ public class NetworkClient implements Runnable {
             NetworkClient.clients.remove(this);
         } catch (IOException e) {
             NetworkClient.clients.remove(this);
-            Chat.logErr(e);
         }
         finally {
             RouteManager.onClientDisconnect();
         }
+        Chat.logInfo("Disconnected: " + socket.getInetAddress().getHostName());
     }
 
 
